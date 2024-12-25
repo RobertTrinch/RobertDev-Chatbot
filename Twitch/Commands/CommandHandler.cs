@@ -56,7 +56,7 @@ namespace RobertDev_Chatbot.Twitch.Commands
             string command = e.ChatMessage.Message.ToLower().Split(' ')[0];
             var commandCheck = db.Commands.FirstOrDefault(x => x.Command == command);
 
-            if(commandCheck != null)
+            if(commandCheck == null)
             {
                 TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' already exists.");
                 return;
