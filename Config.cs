@@ -16,6 +16,8 @@ namespace RobertDev_Chatbot
 
         public static string ChannelUsername { get; set; }
 
+        public static string APIClientId { get; set; }
+        public static string APIClientSecret { get; set; }
 
         public static void GetConfig()
         {
@@ -24,6 +26,8 @@ namespace RobertDev_Chatbot
             BotAccessToken = appSettings["botAccessToken"];
             BotRefreshToken = appSettings["botRefreshToken"];
             ChannelUsername = appSettings["channelUsername"];
+            APIClientId = appSettings["apiClientId"];
+            APIClientSecret = appSettings["apiClientSecret"];
 
             Log.Information("[Config] Config Loaded");
         }

@@ -12,6 +12,7 @@ using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
+using TwitchLib.Communication.Events;
 using TwitchLib.Communication.Models;
 
 namespace RobertDev_Chatbot.Twitch.Connections
@@ -36,12 +37,20 @@ namespace RobertDev_Chatbot.Twitch.Connections
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnWhisperReceived += Client_OnWhisperReceived;
             client.OnConnected += Client_OnConnected;
+            client.OnDisconnected += Client_OnDisconnected;
 
             client.Connect();
         }
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
             Log.Information("[Twitch Client] Connected");
+        }
+
+        private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
+        {
+            Log.Information("[Twitch Client] Disconnected");
+            APIConnection.RefreshToken();
+            client.Connect();
         }
 
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)

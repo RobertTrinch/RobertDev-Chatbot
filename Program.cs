@@ -19,6 +19,7 @@ internal class Program
 
         // Twitch connections
         ClientConnection clientConnection = new ClientConnection();
+        APIConnection.StartAPI();
 
         Console.ReadLine();
     }
