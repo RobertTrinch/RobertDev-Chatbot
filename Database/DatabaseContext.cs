@@ -11,6 +11,7 @@ namespace RobertDev_Chatbot.Database
     public class DatabaseContext : DbContext
     {
         public DbSet<Commands> Commands { get; set; }
+        public DbSet<Users> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -27,6 +28,18 @@ namespace RobertDev_Chatbot.Database
         public string Message { get; set; }
         [Required]
         public int TimesUsed { get; set; }
+    }
+
+    public class Users
+    {
+        [Key]
+        [Required]
+        public string UserID { get; set; }
+        [Required]
+        public string Username { get; set; }
+        public int MessageCount { get; set; }
+        public int Points { get; set; }
+
     }
 
 }

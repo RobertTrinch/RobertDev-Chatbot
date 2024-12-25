@@ -1,5 +1,7 @@
 ﻿using RobertDev_Chatbot.Twitch.Connections;
+using RobertDev_Chatbot.Twitch.Handlers.Users;
 using RobertDev_Chatbot.Twitch.Helpers;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 
-namespace RobertDev_Chatbot.Twitch.Commands
+namespace RobertDev_Chatbot.Twitch.Handlers.Commands
 {
     class CommandHandler
     {
@@ -32,6 +34,13 @@ namespace RobertDev_Chatbot.Twitch.Commands
                 case "!editcom" when e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator:
                     EditCommand(e);
                     break;
+                //TODO: support to tag people and check theirs
+                case "!points":
+                    TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> You have {Points.GetUserPoints(e.ChatMessage.DisplayName.ToLower()):N0} points!");
+                    break;
+                case "!messages":
+                    TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> You have sent {Points.GetUserMessages(e.ChatMessage.DisplayName):N0} messages!");
+                    break;
                 default:
                     GetCommand(e.ChatMessage.DisplayName, e.ChatMessage.Message.ToLower().Split(' ')[0]);
                     break;
@@ -48,12 +57,13 @@ namespace RobertDev_Chatbot.Twitch.Commands
                 TwitchClientHelper.SendMessage(cmd.Message.Replace("[user]", user).Replace("[count]", $"{cmd.TimesUsed}"));
                 db.SaveChanges();
             }
+            Log.Information("[Twitch Commands] Handled command: " + command);
         }
 
         public static void AddCommand(OnMessageReceivedArgs e)
         {
             // Check length
-            if(e.ChatMessage.Message.Split(' ').Length < 3)
+            if (e.ChatMessage.Message.Split(' ').Length < 3)
             {
                 TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Usage: !addcmd [command] [message]");
                 return;
@@ -64,7 +74,7 @@ namespace RobertDev_Chatbot.Twitch.Commands
             string command = e.ChatMessage.Message.ToLower().Split(' ')[1];
             var commandCheck = db.Commands.FirstOrDefault(x => x.Command == command);
 
-            if(commandCheck != null)
+            if (commandCheck != null)
             {
                 TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' already exists.");
                 return;
@@ -79,6 +89,7 @@ namespace RobertDev_Chatbot.Twitch.Commands
             });
             TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{e.ChatMessage.Message.Split(' ')[1]}' has been added.");
             db.SaveChanges();
+            Log.Information("[Twitch Commands] Added command: " + e.ChatMessage.Message.Split(' ')[1]);
         }
 
         public static void RemoveCommand(OnMessageReceivedArgs e)
@@ -105,6 +116,7 @@ namespace RobertDev_Chatbot.Twitch.Commands
             db.Remove(commandCheck);
             TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' has been removed.");
             db.SaveChanges();
+            Log.Information("[Twitch Commands] Removed command: " + command);
         }
 
         public static void EditCommand(OnMessageReceivedArgs e)
@@ -131,6 +143,7 @@ namespace RobertDev_Chatbot.Twitch.Commands
             commandCheck.Message = e.ChatMessage.Message.Remove(0, e.ChatMessage.Message.Split(' ')[0].Length + e.ChatMessage.Message.Split(' ')[1].Length + 2);
             TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' has been edited.");
             db.SaveChanges();
+            Log.Information("[Twitch Commands] Edited command: " + command);
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using RobertDev_Chatbot.Twitch.Commands;
+﻿using RobertDev_Chatbot.Twitch.Handlers.Commands;
+using RobertDev_Chatbot.Twitch.Handlers.Users;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,7 @@ namespace RobertDev_Chatbot.Twitch.Connections
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
             Log.Information($"[Twitch Message Received] ({e.ChatMessage.UserId}) {e.ChatMessage.DisplayName}: {e.ChatMessage.Message}");
+            UserHandler.OnMessage_CheckUser(e);
             CommandHandler.HandleMessage(e);
 
         }
