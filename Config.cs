@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace RobertDev_Chatbot
             BotRefreshToken = appSettings["botRefreshToken"];
             ChannelUsername = appSettings["channelUsername"];
 
+            Log.Information("[Config] Config Loaded");
         }
 
     }

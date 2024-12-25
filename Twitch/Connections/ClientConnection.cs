@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Serilog;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,7 +13,7 @@ using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Models;
 
-namespace RobertDev_Chatbot.Connections.Twitch
+namespace RobertDev_Chatbot.Twitch.Connections
 {
     class ClientConnection
     {
@@ -39,23 +40,23 @@ namespace RobertDev_Chatbot.Connections.Twitch
         }
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
-            Console.WriteLine($"Connected to {e.AutoJoinChannel}");
+            Log.Information("[Twitch Client] Connected");
         }
 
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
-            Console.WriteLine("[TwitchConnection] Joined channel");
+            Log.Information($"[Twitch Client] Joined channel: {e.Channel}");
             client.SendMessage(e.Channel, "Connected");
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            if (e.ChatMessage.Message.Contains("badword"))
-                client.TimeoutUser(e.ChatMessage.Channel, e.ChatMessage.Username, TimeSpan.FromMinutes(30), "Bad word! 30 minute timeout!");
+            Log.Information($"[Twitch Message] ({e.ChatMessage.UserId}) {e.ChatMessage.DisplayName}: {e.ChatMessage.Message}");
         }
 
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
         {
+            Log.Information($"[Twitch Whisper] ({e.WhisperMessage.UserId}) {e.WhisperMessage.Username}: {e.WhisperMessage.Message}");
             client.SendWhisper(e.WhisperMessage.Username, $"Hey {e.WhisperMessage.Username}! This is an automated message, this bot can be used only in the channel's chat and not in whispers. :)");
         }
 
