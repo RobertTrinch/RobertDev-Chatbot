@@ -24,6 +24,14 @@ namespace RobertDev_Chatbot.Twitch.Commands
                 case "!addcom" when e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator:
                     AddCommand(e);
                     break;
+                case "!delcmd" when e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator:
+                case "!delcom" when e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator:
+                    RemoveCommand(e);
+                    break;
+                case "!editcmd" when e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator:
+                case "!editcom" when e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator:
+                    EditCommand(e);
+                    break;
                 default:
                     GetCommand(e.ChatMessage.DisplayName, e.ChatMessage.Message.ToLower().Split(' ')[0]);
                     break;
@@ -53,10 +61,10 @@ namespace RobertDev_Chatbot.Twitch.Commands
 
             // Check if exists
             using var db = new Database.DatabaseContext();
-            string command = e.ChatMessage.Message.ToLower().Split(' ')[0];
+            string command = e.ChatMessage.Message.ToLower().Split(' ')[1];
             var commandCheck = db.Commands.FirstOrDefault(x => x.Command == command);
 
-            if(commandCheck == null)
+            if(commandCheck != null)
             {
                 TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' already exists.");
                 return;
@@ -70,6 +78,58 @@ namespace RobertDev_Chatbot.Twitch.Commands
                 TimesUsed = 0
             });
             TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{e.ChatMessage.Message.Split(' ')[1]}' has been added.");
+            db.SaveChanges();
+        }
+
+        public static void RemoveCommand(OnMessageReceivedArgs e)
+        {
+            // Check length
+            if (e.ChatMessage.Message.Split(' ').Length < 2)
+            {
+                TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Usage: !removecmd [command]");
+                return;
+            }
+
+            // Check if exists
+            using var db = new Database.DatabaseContext();
+            string command = e.ChatMessage.Message.ToLower().Split(' ')[1];
+            var commandCheck = db.Commands.FirstOrDefault(x => x.Command == command);
+
+            if (commandCheck == null)
+            {
+                TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' does not exist.");
+                return;
+            }
+
+            // Remove from database
+            db.Remove(commandCheck);
+            TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' has been removed.");
+            db.SaveChanges();
+        }
+
+        public static void EditCommand(OnMessageReceivedArgs e)
+        {
+            // Check length
+            if (e.ChatMessage.Message.Split(' ').Length < 3)
+            {
+                TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Usage: !editcmd [command] [message]");
+                return;
+            }
+
+            // Check if exists
+            using var db = new Database.DatabaseContext();
+            string command = e.ChatMessage.Message.ToLower().Split(' ')[1];
+            var commandCheck = db.Commands.FirstOrDefault(x => x.Command == command);
+
+            if (commandCheck == null)
+            {
+                TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' does not exist.");
+                return;
+            }
+
+            // Edit in database
+            commandCheck.Message = e.ChatMessage.Message.Remove(0, e.ChatMessage.Message.Split(' ')[0].Length + e.ChatMessage.Message.Split(' ')[1].Length + 2);
+            TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> Command '{command}' has been edited.");
             db.SaveChanges();
         }
 
