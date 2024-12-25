@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using RobertDev_Chatbot.Twitch.Commands;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace RobertDev_Chatbot.Twitch.Connections
     class ClientConnection
     {
 
-        TwitchClient client;
+        public static TwitchClient client;
         public ClientConnection()
         {
             ConnectionCredentials credentials = new ConnectionCredentials(Config.BotUsername, Config.BotAccessToken);
@@ -51,7 +52,9 @@ namespace RobertDev_Chatbot.Twitch.Connections
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)
         {
-            Log.Information($"[Twitch Message] ({e.ChatMessage.UserId}) {e.ChatMessage.DisplayName}: {e.ChatMessage.Message}");
+            Log.Information($"[Twitch Message Received] ({e.ChatMessage.UserId}) {e.ChatMessage.DisplayName}: {e.ChatMessage.Message}");
+            CommandHandler.HandleMessage(e);
+
         }
 
         private void Client_OnWhisperReceived(object sender, OnWhisperReceivedArgs e)
@@ -59,6 +62,5 @@ namespace RobertDev_Chatbot.Twitch.Connections
             Log.Information($"[Twitch Whisper] ({e.WhisperMessage.UserId}) {e.WhisperMessage.Username}: {e.WhisperMessage.Message}");
             client.SendWhisper(e.WhisperMessage.Username, $"Hey {e.WhisperMessage.Username}! This is an automated message, this bot can be used only in the channel's chat and not in whispers. :)");
         }
-
     }
 }
