@@ -34,12 +34,12 @@ namespace RobertDev_Chatbot.Twitch.Handlers.Commands
                 case "!editcom" when e.ChatMessage.IsBroadcaster || e.ChatMessage.IsModerator:
                     EditCommand(e);
                     break;
-                //TODO: support to tag people and check theirs
                 case "!points":
                     PointsCmdHandler.GetUserPoints_Command(e);
                     break;
+                case "!msgs":
                 case "!messages":
-                    TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> You have sent {Points.GetUserMessages(e.ChatMessage.DisplayName):N0} messages!");
+                    PointsCmdHandler.GetUserMessages_Command(e);
                     break;
                 default:
                     GetCommand(e.ChatMessage.DisplayName, e.ChatMessage.Message.ToLower().Split(' ')[0]);
@@ -54,10 +54,10 @@ namespace RobertDev_Chatbot.Twitch.Handlers.Commands
             if (cmd != null)
             {
                 cmd.TimesUsed++;
-                TwitchClientHelper.SendMessage(cmd.Message.Replace("[user]", user).Replace("[count]", $"{cmd.TimesUsed}"));
+                TwitchClientHelper.SendMessage(cmd.Message.Replace("[user]", user).Replace("[count]", $"{cmd.TimesUsed:N0}"));
                 db.SaveChanges();
+                Log.Information("[Twitch Commands] Handled command: " + command);
             }
-            Log.Information("[Twitch Commands] Handled command: " + command);
         }
 
         public static void AddCommand(OnMessageReceivedArgs e)

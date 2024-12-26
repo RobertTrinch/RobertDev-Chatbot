@@ -23,5 +23,18 @@ namespace RobertDev_Chatbot.Twitch.Handlers.Commands
             var user = e.ChatMessage.Message.ToLower().Split(' ')[1];
             TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> {user} has {Points.GetUserPoints(user.ToLower()):N0} points!");
         }
+
+        public static void GetUserMessages_Command(OnMessageReceivedArgs e)
+        {
+            if (e.ChatMessage.Message.ToLower().Split(' ').Count() != 2)
+            {
+                TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> You have sent {Points.GetUserMessages(e.ChatMessage.DisplayName.ToLower().Replace("@", "")):N0} messages!");
+                return;
+            }
+
+            var user = e.ChatMessage.Message.ToLower().Split(' ')[1];
+            TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> {user} has sent {Points.GetUserMessages(user.ToLower()):N0} messages!");
+        }
+
     }
 }
