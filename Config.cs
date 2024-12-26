@@ -13,23 +13,21 @@ namespace RobertDev_Chatbot
         public static string BotUsername { get; set; }
         public static string BotAccessToken { get; set; }
         public static string BotRefreshToken { get; set; }
-
-        public static string ChannelUsername { get; set; }
-
         public static string APIClientId { get; set; }
         public static string APIClientSecret { get; set; }
+        public static string ChannelUsername { get; set; }
 
         public static void GetConfig()
         {
-            var appSettings = ConfigurationManager.AppSettings;
-            BotUsername = appSettings["botUsername"];
-            BotAccessToken = appSettings["botAccessToken"];
-            BotRefreshToken = appSettings["botRefreshToken"];
-            ChannelUsername = appSettings["channelUsername"];
-            APIClientId = appSettings["apiClientId"];
-            APIClientSecret = appSettings["apiClientSecret"];
+            using var db = new Database.DatabaseContext();
+            var config = db.Config.FirstOrDefault();
+            BotUsername = config.BotUsername;
+            BotAccessToken = config.BotAccessToken;
+            BotRefreshToken = config.BotRefreshToken;
+            APIClientId = config.APIClientId;
+            APIClientSecret = config.APIClientSecret;
+            ChannelUsername = config.ChannelUsername;
 
-            Log.Information("[Config] Config Loaded");
         }
 
     }

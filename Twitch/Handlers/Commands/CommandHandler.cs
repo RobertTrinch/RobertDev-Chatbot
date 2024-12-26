@@ -36,7 +36,7 @@ namespace RobertDev_Chatbot.Twitch.Handlers.Commands
                     break;
                 //TODO: support to tag people and check theirs
                 case "!points":
-                    TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> You have {Points.GetUserPoints(e.ChatMessage.DisplayName.ToLower()):N0} points!");
+                    PointsCmdHandler.GetUserPoints_Command(e);
                     break;
                 case "!messages":
                     TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> You have sent {Points.GetUserMessages(e.ChatMessage.DisplayName):N0} messages!");

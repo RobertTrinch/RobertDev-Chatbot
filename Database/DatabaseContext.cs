@@ -10,6 +10,7 @@ namespace RobertDev_Chatbot.Database
 {
     public class DatabaseContext : DbContext
     {
+        public DbSet<Config> Config { get; set; }
         public DbSet<Commands> Commands { get; set; }
         public DbSet<Users> Users { get; set; }
 
@@ -17,6 +18,23 @@ namespace RobertDev_Chatbot.Database
         {
             optionsBuilder.UseSqlite("Data Source=RobertDev-Chatbot.db");
         }
+    }
+
+    public class Config
+    {
+        [Key]
+        [Required]
+        public string BotUsername { get; set; }
+        [Required]
+        public string BotAccessToken { get; set; }
+        [Required]
+        public string BotRefreshToken { get; set; }
+        [Required]
+        public string APIClientId { get; set; }
+        [Required]
+        public string APIClientSecret { get; set; }
+        [Required]
+        public string ChannelUsername { get; set; }
     }
 
     public class Commands
