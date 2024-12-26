@@ -41,6 +41,12 @@ namespace RobertDev_Chatbot.Twitch.Handlers.Commands
                 case "!messages":
                     PointsCmdHandler.GetUserMessages_Command(e);
                     break;
+                case "!trivia":
+                    Trivia.HandleTriviaQuestionCommand(e);
+                    break;
+                case "!answer":
+                    Trivia.HandleTriviaAnswerCommand(e);
+                    break;
                 default:
                     GetCommand(e.ChatMessage.DisplayName, e.ChatMessage.Message.ToLower().Split(' ')[0]);
                     break;
