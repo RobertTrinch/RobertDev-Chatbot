@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchLib.Api;
+using TwitchLib.Client.Models;
 
 namespace RobertDev_Chatbot.Twitch.Connections
 {
@@ -24,12 +25,15 @@ namespace RobertDev_Chatbot.Twitch.Connections
         {
             Log.Information("[API Connection] Refreshing Token - " + Config.BotAccessToken);
             var refresh = await api.Auth.RefreshAuthTokenAsync(Config.BotRefreshToken, Config.APIClientSecret);
+
             using var db = new Database.DatabaseContext();
             var config = db.Config.FirstOrDefault();
             config.BotAccessToken = refresh.AccessToken; // database
             Config.BotAccessToken = refresh.AccessToken; // config.cs
             db.SaveChanges();
+
             Log.Information("[API Connection] New Token - " + Config.BotAccessToken);
+            ClientConnection.client.SetConnectionCredentials(new ConnectionCredentials(Config.BotUsername, Config.BotAccessToken)); // client connection
         }
     }
 }

@@ -33,31 +33,31 @@ namespace RobertDev_Chatbot.Twitch.Connections
             WebSocketClient customClient = new WebSocketClient(clientOptions);
             client = new TwitchClient(customClient);
             client.Initialize(credentials, Config.ChannelUsername);
+            client.Connect();
 
             client.OnJoinedChannel += Client_OnJoinedChannel;
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnWhisperReceived += Client_OnWhisperReceived;
             client.OnConnected += Client_OnConnected;
             client.OnDisconnected += Client_OnDisconnected;
-
-            client.Connect();
         }
         private void Client_OnConnected(object sender, OnConnectedArgs e)
         {
+            client.JoinChannel(Config.ChannelUsername);
             Log.Information("[Twitch Client] Connected");
+            client.SendMessage(Config.ChannelUsername, "Connected");
         }
 
         private void Client_OnDisconnected(object sender, OnDisconnectedEventArgs e)
         {
             Log.Information("[Twitch Client] Disconnected");
             APIConnection.RefreshToken();
-            client.Connect();
+            client.Connect(); // reconnect
         }
 
         private void Client_OnJoinedChannel(object sender, OnJoinedChannelArgs e)
         {
             Log.Information($"[Twitch Client] Joined channel: {e.Channel}");
-            client.SendMessage(e.Channel, "Connected");
         }
 
         private void Client_OnMessageReceived(object sender, OnMessageReceivedArgs e)

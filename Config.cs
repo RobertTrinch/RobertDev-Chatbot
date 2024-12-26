@@ -27,6 +27,7 @@ namespace RobertDev_Chatbot
             APIClientId = config.APIClientId;
             APIClientSecret = config.APIClientSecret;
             ChannelUsername = config.ChannelUsername;
+            Log.Information("[Config] Loaded Config");
 
         }
 
