@@ -22,14 +22,14 @@ namespace RobertDev_Chatbot.Twitch.Handlers.Users
                     UserID = e.ChatMessage.UserId,
                     Username = e.ChatMessage.DisplayName,
                     MessageCount = 1,
-                    Points = 1000
+                    Points = 2500
                 });
                 Log.Information("[Twitch Users] Added new user to database: " + e.ChatMessage.DisplayName);
             }
             else
             {
                 user.MessageCount++;
-                user.Points = user.Points + 2;
+                user.Points = user.Points + 5;
                 Log.Information("[Twitch Users] Updated user in database: " + e.ChatMessage.DisplayName);
             }
             db.SaveChanges();

@@ -59,8 +59,8 @@ namespace RobertDev_Chatbot.Twitch.Handlers.Commands
                     TriviaQuestion triviaQuestion = JsonConvert.DeserializeObject<TriviaQuestion>(json);
                     // Shuffle the answers (thank you copilot for this amazing one-liner)
                     triviaQuestion.results[0].incorrect_answers = triviaQuestion.results[0].incorrect_answers.Append(triviaQuestion.results[0].correct_answer).OrderBy(x => Guid.NewGuid()).ToArray();
-                    string answers = string.Join(", ", triviaQuestion.results[0].incorrect_answers);
-                    TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> {HttpUtility.HtmlDecode(triviaQuestion.results[0].question)} --- Your answers are: {answers} PogChamp Place your answer by doing !answer <answer> (Full answer!)");
+                    string answers = string.Join(" ▪️ ", triviaQuestion.results[0].incorrect_answers);
+                    TwitchClientHelper.SendMessage($"@{e.ChatMessage.DisplayName} -> {HttpUtility.HtmlDecode(triviaQuestion.results[0].question)} ❓ --- Your answers are: {"▪️ " + answers} PogChamp Place your answer by doing !answer <answer> (Full answer!)");
                     // Add user to active trivia users
                     activeTriviaUsers.Add(e.ChatMessage.Username, new ActiveTrivia { Answer = triviaQuestion.results[0].correct_answer, BetAmount = betAmount });
                 }
